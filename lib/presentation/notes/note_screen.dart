@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note_app/domain/model/note.dart';
 import 'package:note_app/presentation/add_edit_note/add_edit_note_screen.dart';
-import 'package:note_app/ui/colors.dart';
+import 'package:note_app/presentation/notes/notes_event.dart';
+import 'package:note_app/presentation/notes/notes_view_model.dart';
+import 'package:provider/provider.dart';
 
 import 'components/note_item.dart';
 
@@ -10,6 +11,8 @@ class NoteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<NotesViewModel>();
+    final state = viewModel.state;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -22,30 +25,24 @@ class NoteScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_)=>const AddEditNoteScreen()));
+        onPressed: () async{
+          bool? isSaved = await Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AddEditNoteScreen()));
+
+          if(isSaved != null && isSaved){
+            viewModel.onEvent(const NotesEvent.loadNotes());
+          }
         },
         child: const Icon(Icons.add),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
-          children: [
-            NoteItem(
-              note: Note(
-                  title: 'title',
-                  content: 'content',
-                  color: wisteria.value,
-                  timestamp: 1),
-            ),
-            NoteItem(
-              note: Note(
-                  title: 'title2',
-                  content: 'content2',
-                  color: skyBlue.value,
-                  timestamp: 2),
-            ),
-          ],
+          children: state.notes
+              .map((note) => NoteItem(
+                    note: note,
+                  ))
+              .toList(),
         ),
       ),
     );

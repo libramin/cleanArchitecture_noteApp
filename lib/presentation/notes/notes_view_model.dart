@@ -8,7 +8,9 @@ import '../../domain/model/note.dart';
 class NotesViewModel with ChangeNotifier {
   final NoteRepository repository;
 
-  NotesViewModel(this.repository);
+  NotesViewModel(this.repository){
+    _loadNotes();
+  }
 
   NotesState _state = NotesState();
 
