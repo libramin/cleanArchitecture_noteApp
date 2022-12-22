@@ -25,11 +25,11 @@ class NoteScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async{
+        onPressed: () async {
           bool? isSaved = await Navigator.push(context,
               MaterialPageRoute(builder: (_) => const AddEditNoteScreen()));
 
-          if(isSaved != null && isSaved){
+          if (isSaved != null && isSaved) {
             viewModel.onEvent(const NotesEvent.loadNotes());
           }
         },
@@ -41,6 +41,18 @@ class NoteScreen extends StatelessWidget {
           children: state.notes
               .map((note) => NoteItem(
                     note: note,
+                    onDeleteTap: () {
+                      viewModel.onEvent(NotesEvent.deleteNote(note));
+
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: const Text('노트가 삭제되었습니다'),
+                        action: SnackBarAction(
+                            label: '취소',
+                            onPressed: () {
+                              viewModel.onEvent(const NotesEvent.restoreNote());
+                            }),
+                      ));
+                    },
                   ))
               .toList(),
         ),
