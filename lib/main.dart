@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'note app',
       theme: ThemeData(
+        unselectedWidgetColor: Colors.white,
         primaryColor: Colors.white,
         backgroundColor: darkGray,
         canvasColor: darkGray,
